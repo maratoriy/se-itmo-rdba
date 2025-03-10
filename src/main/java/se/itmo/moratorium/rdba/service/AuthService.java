@@ -7,10 +7,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import se.itmo.moratorium.rdba.controller.dto.UserRegistrationDto;
-import se.itmo.moratorium.rdba.model.users.UserEntity;
-import se.itmo.moratorium.rdba.model.users.UserRepository;
-import se.itmo.moratorium.rdba.service.mapper.UserMapper;
+import se.itmo.moratorium.rdba.dto.UserRegistrationDto;
+import se.itmo.moratorium.rdba.model.UserEntity;
+import se.itmo.moratorium.rdba.repository.UserRepository;
+import se.itmo.moratorium.rdba.mapper.UserMapper;
 import se.itmo.moratorium.rdba.util.JwtUtil;
 
 @Service

@@ -1,9 +1,7 @@
-package se.itmo.moratorium.rdba.model.tasks;
+package se.itmo.moratorium.rdba.model;
 
 import lombok.*;
 import jakarta.persistence.*;
-import se.itmo.moratorium.rdba.model.projects.ProjectEntity;
-import se.itmo.moratorium.rdba.model.users.UserEntity;
 
 import java.time.LocalDateTime;
 

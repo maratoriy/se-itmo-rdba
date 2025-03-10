@@ -1,12 +1,11 @@
-package se.itmo.moratorium.rdba.controller.dto;
+package se.itmo.moratorium.rdba.dto;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 
 @Value
 @RequiredArgsConstructor
-public class UserRegistrationDto {
+public class UserLoginDto {
     private final String login;
-    private final String email;
     private final String password;
 }

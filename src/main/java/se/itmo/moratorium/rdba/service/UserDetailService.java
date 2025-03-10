@@ -5,7 +5,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import se.itmo.moratorium.rdba.model.users.UserRepository;
+import se.itmo.moratorium.rdba.repository.UserRepository;
 
 @RequiredArgsConstructor
 @Service

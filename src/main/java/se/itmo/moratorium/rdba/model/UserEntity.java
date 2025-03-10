@@ -1,4 +1,4 @@
-package se.itmo.moratorium.rdba.model.users;
+package se.itmo.moratorium.rdba.model;
 
 import java.time.LocalDateTime;
 import java.util.Collection;

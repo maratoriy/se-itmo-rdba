@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import se.itmo.moratorium.rdba.controller.dto.UserLoginDto;
-import se.itmo.moratorium.rdba.controller.dto.UserRegistrationDto;
+import se.itmo.moratorium.rdba.dto.UserLoginDto;
+import se.itmo.moratorium.rdba.dto.UserRegistrationDto;
 import se.itmo.moratorium.rdba.service.AuthService;
 
 @RestController
