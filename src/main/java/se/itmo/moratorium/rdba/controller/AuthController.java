@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import se.itmo.moratorium.rdba.dto.TokenResponseDto;
 import se.itmo.moratorium.rdba.dto.UserLoginDto;
 import se.itmo.moratorium.rdba.dto.UserRegistrationDto;
 import se.itmo.moratorium.rdba.service.AuthService;
@@ -17,14 +18,14 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody UserRegistrationDto registrationDto) {
+    public ResponseEntity<TokenResponseDto> register(@RequestBody UserRegistrationDto registrationDto) {
         String token = authService.register(registrationDto);
-        return ResponseEntity.ok(token);
+        return ResponseEntity.ok(new TokenResponseDto(token));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody UserLoginDto loginDto) {
+    public ResponseEntity<TokenResponseDto> login(@RequestBody UserLoginDto loginDto) {
         String token = authService.authenticate(loginDto.getLogin(), loginDto.getPassword());
-        return ResponseEntity.ok(token);
+        return ResponseEntity.ok(new TokenResponseDto(token));
     }
 }

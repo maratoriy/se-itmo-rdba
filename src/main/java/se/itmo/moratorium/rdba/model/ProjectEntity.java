@@ -2,9 +2,13 @@ package se.itmo.moratorium.rdba.model;
 
 import lombok.*;
 import jakarta.persistence.*;
-import se.itmo.moratorium.rdba.model.TaskEntity;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -28,9 +32,21 @@ public class ProjectEntity {
     private String name;
     private String description;
 
+    @CreationTimestamp
     private LocalDateTime createdAt;
+
+    @UpdateTimestamp
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
-    private Set<TaskEntity> tasks;
+    private List<TaskEntity> tasks;
+
+    @ManyToMany
+    @JoinTable(
+            name = "project_user",
+            joinColumns = @JoinColumn(name = "project_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    @Builder.Default
+    private List<UserEntity> users = new ArrayList<>();
 }
