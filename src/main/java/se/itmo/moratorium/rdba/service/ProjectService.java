@@ -7,7 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import se.itmo.moratorium.rdba.dto.ProjectRequestDto;
 import se.itmo.moratorium.rdba.dto.ProjectResponseDto;
+import se.itmo.moratorium.rdba.dto.UserResponseDto;
 import se.itmo.moratorium.rdba.mapper.ProjectMapper;
+import se.itmo.moratorium.rdba.mapper.UserMapper;
 import se.itmo.moratorium.rdba.model.ProjectEntity;
 import se.itmo.moratorium.rdba.model.UserEntity;
 import se.itmo.moratorium.rdba.repository.ProjectRepository;
@@ -19,6 +21,7 @@ public class ProjectService {
 
     private final ProjectRepository projectRepository;
     private final ProjectMapper projectMapper;
+    private final UserMapper userMapper;
     private final SecurityService securityService;
     private final UserRepository userRepository;
 
@@ -75,6 +78,15 @@ public class ProjectService {
 
         project.getUsers().add(user);
         projectRepository.save(project);
+    }
+
+    public List<UserResponseDto> getUsersByProjectId(Long projectId) {
+        ProjectEntity project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("Project not found"));
+        verifyUserAccess(project);
+        return project.getUsers().stream()
+                .map(userMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     private void verifyUserAccess(ProjectEntity project) {

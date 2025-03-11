@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import se.itmo.moratorium.rdba.dto.ProjectRequestDto;
 import se.itmo.moratorium.rdba.dto.ProjectResponseDto;
+import se.itmo.moratorium.rdba.dto.UserResponseDto;
 import se.itmo.moratorium.rdba.service.ProjectService;
 
 @RestController
@@ -58,5 +59,11 @@ public class ProjectController {
     public ResponseEntity<Void> addUserToProject(@PathVariable Long projectId, @PathVariable Long userId) {
         projectService.addUserToProject(projectId, userId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{projectId}/users")
+    public ResponseEntity<List<UserResponseDto>> getUsersByProjectId(@PathVariable Long projectId) {
+        List<UserResponseDto> users = projectService.getUsersByProjectId(projectId);
+        return ResponseEntity.ok(users);
     }
 }
