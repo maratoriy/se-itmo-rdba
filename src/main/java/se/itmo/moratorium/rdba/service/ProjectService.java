@@ -1,6 +1,5 @@
 package se.itmo.moratorium.rdba.service;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,6 +11,7 @@ import se.itmo.moratorium.rdba.mapper.ProjectMapper;
 import se.itmo.moratorium.rdba.model.ProjectEntity;
 import se.itmo.moratorium.rdba.model.UserEntity;
 import se.itmo.moratorium.rdba.repository.ProjectRepository;
+import se.itmo.moratorium.rdba.repository.UserRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -20,10 +20,10 @@ public class ProjectService {
     private final ProjectRepository projectRepository;
     private final ProjectMapper projectMapper;
     private final SecurityService securityService;
+    private final UserRepository userRepository;
 
     public ProjectResponseDto createProject(ProjectRequestDto projectRequestDto) {
         ProjectEntity projectEntity = projectMapper.toEntity(projectRequestDto);
-
         UserEntity currentUser = securityService.getCurrentUser();
         projectEntity.getUsers().add(currentUser);
         ProjectEntity savedProject = projectRepository.save(projectEntity);
@@ -33,9 +33,7 @@ public class ProjectService {
     public ProjectResponseDto getProjectById(Long id) {
         ProjectEntity project = projectRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Project not found"));
-        if (!project.getUsers().contains(securityService.getCurrentUser())) {
-            throw new RuntimeException("Access denied");
-        }
+        verifyUserAccess(project);
         return projectMapper.toDto(project);
     }
 
@@ -49,14 +47,9 @@ public class ProjectService {
     public ProjectResponseDto updateProject(Long id, ProjectRequestDto projectRequestDto) {
         ProjectEntity existingProject = projectRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Project not found"));
-
-        if (!existingProject.getUsers().contains(securityService.getCurrentUser())) {
-            throw new RuntimeException("Access denied");
-        }
-
+        verifyUserAccess(existingProject);
         existingProject.setName(projectRequestDto.getName());
         existingProject.setDescription(projectRequestDto.getDescription());
-
         ProjectEntity updatedProject = projectRepository.save(existingProject);
         return projectMapper.toDto(updatedProject);
     }
@@ -64,9 +57,30 @@ public class ProjectService {
     public void deleteProject(Long id) {
         ProjectEntity project = projectRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Project not found"));
-        if (!project.getUsers().contains(securityService.getCurrentUser())) {
+        verifyUserAccess(project);
+        projectRepository.deleteById(id);
+    }
+
+    public void addUserToProject(Long projectId, Long userId) {
+        ProjectEntity project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("Project not found"));
+        verifyUserAccess(project);
+
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (project.getUsers().contains(user)) {
+            throw new RuntimeException("User is already associated with this project");
+        }
+
+        project.getUsers().add(user);
+        projectRepository.save(project);
+    }
+
+    private void verifyUserAccess(ProjectEntity project) {
+        UserEntity currentUser = securityService.getCurrentUser();
+        if (!project.getUsers().contains(currentUser)) {
             throw new RuntimeException("Access denied");
         }
-        projectRepository.deleteById(id);
     }
 }
