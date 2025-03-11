@@ -16,6 +16,8 @@ public class TaskResponseDto {
     private String title;
     private String description;
     private TaskStatus status;
+    private UserResponseDto assignedUser;
+    private Long projectId;
     private TaskPriority priority;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

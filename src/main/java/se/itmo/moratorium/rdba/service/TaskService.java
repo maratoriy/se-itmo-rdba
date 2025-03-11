@@ -10,14 +10,16 @@ import se.itmo.moratorium.rdba.model.ProjectEntity;
 import se.itmo.moratorium.rdba.model.UserEntity;
 import se.itmo.moratorium.rdba.repository.TaskRepository;
 import se.itmo.moratorium.rdba.repository.ProjectRepository;
+import se.itmo.moratorium.rdba.repository.UserRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class TaskService {
-
+    private final UserRepository userRepository;
     private final TaskRepository taskRepository;
     private final ProjectRepository projectRepository;
     private final TaskMapper taskMapper;
@@ -26,11 +28,18 @@ public class TaskService {
     public TaskResponseDto createTask(TaskRequestDto taskRequestDto) {
         ProjectEntity project = projectRepository.findById(taskRequestDto.getProjectId())
                 .orElseThrow(() -> new RuntimeException("Project not found"));
+        UserEntity user = Optional.ofNullable(taskRequestDto.getAssignedUserId())
+                        .map(userRepository::findById)
+                        .filter(Optional::isPresent)
+                        .map(Optional::get)
+                        .orElse(null);
+
 
         verifyAccessToProject(project);
 
         TaskEntity taskEntity = taskMapper.toEntity(taskRequestDto);
         taskEntity.setProject(project);
+        taskEntity.setAssignedUser(user);
         TaskEntity savedTask = taskRepository.save(taskEntity);
 
         return taskMapper.toDto(savedTask);
@@ -62,9 +71,15 @@ public class TaskService {
     public TaskResponseDto updateTask(Long id, TaskRequestDto taskRequestDto) {
         TaskEntity task = taskRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Task not found"));
+        UserEntity user = Optional.ofNullable(taskRequestDto.getAssignedUserId())
+                .map(userRepository::findById)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .orElse(null);
 
         verifyAccessToProject(task.getProject());
 
+        task.setAssignedUser(user);
         task.setTitle(taskRequestDto.getTitle());
         task.setDescription(taskRequestDto.getDescription());
         task.setStatus(taskRequestDto.getStatus());
